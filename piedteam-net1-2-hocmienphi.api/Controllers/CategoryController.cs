@@ -37,14 +37,15 @@ public class CategoryController :  ControllerBase
         query = query.OrderBy(x => x.Name);
         
 
-        var selectQuery = query.Select(x => new Response.GetAllParentCategoryResponse()
+        var selectedQuery = query.Select(x => new Response.GetAllParentCategoryResponse()
         {
-            Id = x.Id.ToString(),
+            Id = x.Id,
             Name = x.Name,
             
         }).ToList();
 
-        var result = selectQuery.ToList();
+
+        var result = selectedQuery.ToList();
         return Ok(result);
         
         // Mục đích của tạo GetAllParentCategoryResponse
@@ -65,7 +66,7 @@ public class CategoryController :  ControllerBase
         
         var selectedQuery = query.Select(x => new Response.GetAllParentCategoryResponse()
         {
-            Id = x.Id.ToString(),
+            Id = x.Id,
             Name = x.Name,
             
         }).ToList();
@@ -76,7 +77,7 @@ public class CategoryController :  ControllerBase
         // cũng quăng ra full (id, name, parentId) nhưng api chỉ cần 2 field
         // quăng ra mà k xài thì phí lắm !
         
-        var result = selectedQuery.ToList();
+         var result = selectedQuery.ToList();
         return Ok(result);
         // Lấy tất cả User trong database
         return Ok("Đây là tất cả User trong databases");

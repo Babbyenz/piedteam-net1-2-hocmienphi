@@ -89,20 +89,20 @@ app.Run();
 // Để 1 User có thể trở thành 1 Mentor 
     // User sẽ điền thông tin để apply trở thành Mentor 
         // 1 User sẽ có yêu cầu (ApplyRequest) để trở thành Mentor
+            // Khi mà người dùng đưa cho mình file Cv, chúng ta sẽ upload file đó lên Cloud 
         // => MQH 1 - N: Có thể có đơn bị từ chối hoặc được duyệt 
 
     // Khi mà có User apply nộp đơn, thì hệ thống thông báo cho Admin
     // Khi Admin duyệt (Từ chối, chấp nhận) thì phải thông báo cho user 
     // Admin sẽ duyệt thông tin đó, nếu thông tin hợp lệ thì sẽ duyệt 
     // Nếu được duyệt thì User đó sẽ trở thành Mentor
-
     // Chỉ có User nào có quyền Admin thì mới đc sử dụng API như lấy đơn hệ thống/phê duyệt đơn 
 
     // API:
         // Tạo đơn 
             //(Dành cho User)
             // POST /api/applyRequest
-                // Để gọi được API này, cần CV và mô tả bản thân
+                // Để gọi được API này, cần CV và mô tả bản thân 
 
         // Lấy các đơn apply của tôi
             // GET /api/applyRequest/me
@@ -112,20 +112,17 @@ app.Run();
             // GET /api/applyRequest
             // Admin cần api này để duyệt đơn apply của người dùng 
         
-        // Lấy thông tin chi tiết của đơn này 
-        // GET /api/applyRequest/{id}
+        // Lấy thông tin chi tiết của đơn này
             // Dành cho Admin và User
+            // GET /api/applyRequest/{id}
 
         // Duyệt đơn apply 
             // Dành cho Admin 
             // POST /api/applyRequest/{id}/review
             // Khi duyệt đơn thì Admin có thể chọn duyệt hay từ chối 
-            // Nếu từ chối thì pahỉ có lý do từ chối 
+            // Nếu từ chối thì phải có lý do từ chối 
+            // Khi mà duyệt đơn xong role của User phải được đổi thành Mentor
             // Khi duyệt đơn thì hệ thống phải thông báo cho User về kết quả của đơn apply đó 
-
-
-            
-
 
 // Kĩ thuật snapshot: 
     // Dùng để lưu dữ liệu ban đầu để dễ truy xuất 
@@ -147,6 +144,7 @@ app.Run();
         // Quản lí Profile 
 
 //tìm AI theo 4W 1H 
+
 
 
 

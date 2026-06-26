@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using piedteam_net1_2_hocmienphi.repository;
 using piedteam_net1_2_hocmienphi.repository.entity;
 using piedteam_net1_2_hocmienphi.service.UserService;
+using piedteam_net1_2_hocmienphi.service.Utils.JwtService;
 
 namespace piedteam_net1_2_hocmienphi.api.Controllers;
 
@@ -11,83 +13,86 @@ namespace piedteam_net1_2_hocmienphi.api.Controllers;
 
 public class UserController : ControllerBase
 {
-    // Endpoint gọi tên khác là các APIs
-    // VD: POST /api/auth/login //Login 
-    // VD: POST /api/auth/register //Đăng kí
-    // VD: GET /api/user/{id} //Lấy thông tin của 1 User 
-    // VD: PUT /api/user/{id} //Cập nhật thông tin của 1 User 
-    // VD: DELETE /api/user/{id} //Xóa 1 user 
+    /*
+     * // Endpoint gọi tên khác là các APIs
+       // VD: POST /api/auth/login //Login 
+       // VD: POST /api/auth/register //Đăng kí
+       // VD: GET /api/user/{id} //Lấy thông tin của 1 User 
+       // VD: PUT /api/user/{id} //Cập nhật thông tin của 1 User 
+       // VD: DELETE /api/user/{id} //Xóa 1 user 
 
-    // Những Endpoint này làm thế nào nó xuất hiện -> Khai báo trong Controller 
+       // Những Endpoint này làm thế nào nó xuất hiện -> Khai báo trong Controller 
 
-    // Có mấy phương thức | Method của 1 Request 
-    // GET, POST, PUT, PATCH, DELETE
-    // GET: lấy dữ liệu 
-    // POST: Tạo mới dữ liệu 
-    // PUT | PATCH: Cập nhật dữ liệu 
-    // DELETE: Xóa dữ liệu 
+       // Có mấy phương thức | Method của 1 Request 
+       // GET, POST, PUT, PATCH, DELETE
+       // GET: lấy dữ liệu 
+       // POST: Tạo mới dữ liệu 
+       // PUT | PATCH: Cập nhật dữ liệu 
+       // DELETE: Xóa dữ liệu 
 
-    //1. Tại sao lại sinh ra các METHOD này 
-    //2. 1 METHOD mà mình chơi hết cho tất cả được không. VD: 1 POST mình chơi hết(lấy, tạo, update, xóa) 
+       //1. Tại sao lại sinh ra các METHOD này 
+       //2. 1 METHOD mà mình chơi hết cho tất cả được không. VD: 1 POST mình chơi hết(lấy, tạo, update, xóa) 
 
-    // GET khác POST, PUT, DELETE ở chỗ nào ?
-    // GET: Thường sẽ k có request body, dữ liệu sẽ được truyền qua query hoặc route 
+       // GET khác POST, PUT, DELETE ở chỗ nào ?
+       // GET: Thường sẽ k có request body, dữ liệu sẽ được truyền qua query hoặc route 
 
-    // Theo ae có mấy cách để Frontend truyền dữ liệu sang cho BE 
-    // Biết là call API, nhưng mà những cái data mà FE gửi thì nó nằm ở đâu trong Request 
+       // Theo ae có mấy cách để Frontend truyền dữ liệu sang cho BE 
+       // Biết là call API, nhưng mà những cái data mà FE gửi thì nó nằm ở đâu trong Request 
 
-    // Thông thường FE truyền Data qua 3 cách: 
-    // Query Param: /api/users?name=tan&age=18
-    // là những Param được nằm trên URL và sau dấu ? 
-    // Như URL ở trên thì chúng ta có 2 Query Param là name = tan và age = 18 
+       // Thông thường FE truyền Data qua 3 cách: 
+       // Query Param: /api/users?name=tan&age=18
+       // là những Param được nằm trên URL và sau dấu ? 
+       // Như URL ở trên thì chúng ta có 2 Query Param là name = tan và age = 18 
 
-    // Route Param: /api/user/{id} | /api/users/1234
-    // là những Param được nằm trên URL và sau dấu / 
-    // Như URL ở trên thì chúng ta có 1 Route Param là id = 1234 
+       // Route Param: /api/user/{id} | /api/users/1234
+       // là những Param được nằm trên URL và sau dấu / 
+       // Như URL ở trên thì chúng ta có 1 Route Param là id = 1234 
 
-    // Body: Thường sẽ dùng cho POST, PUT, PATCH, DELETE
+       // Body: Thường sẽ dùng cho POST, PUT, PATCH, DELETE
 
-    // Vì GET thông thường sẽ không có BODY, nên chúng ta hạn chế sử dụng cho các API cần bảo mật 
-    // GET để login: GET /api/auth/login?email=tan&password=123
-    // Thông thường khi Login chúng ta thường xài Method là POST /api/auth/login, data sẽ được giấu ở trong body 
+       // Vì GET thông thường sẽ không có BODY, nên chúng ta hạn chế sử dụng cho các API cần bảo mật 
+       // GET để login: GET /api/auth/login?email=tan&password=123
+       // Thông thường khi Login chúng ta thường xài Method là POST /api/auth/login, data sẽ được giấu ở trong body 
 
-    // Request là gì ? 
-    // 1 yêu cầu xuống server, mong muốn server làm gì đó và trả ra kết quả 
-    // Ví dụ: 1 HTTP Request Login, mong muốn server xác thực thông tin đăng nhập, và trả ra kết quả là Token hoặc lỗi 
-    // Trong 1 HTTP Request thì sẽ có những thành phần sau: 
-    // URL: Địa chỉ của API mà chúng ta muốn gọi 
-    // Method: GET, POST, PUT, DELETE
-    // Header: Chứa các thông tin về Request như là Content-Type, Authorization, v.v.. 
-    // Body: Chứa dữ liệu mà chúng ta muốn gửi lên server (thường dùng cho POST, PUT, PATCH, DELETE)
+       // Request là gì ? 
+       // 1 yêu cầu xuống server, mong muốn server làm gì đó và trả ra kết quả 
+       // Ví dụ: 1 HTTP Request Login, mong muốn server xác thực thông tin đăng nhập, và trả ra kết quả là Token hoặc lỗi 
+       // Trong 1 HTTP Request thì sẽ có những thành phần sau: 
+       // URL: Địa chỉ của API mà chúng ta muốn gọi 
+       // Method: GET, POST, PUT, DELETE
+       // Header: Chứa các thông tin về Request như là Content-Type, Authorization, v.v.. 
+       // Body: Chứa dữ liệu mà chúng ta muốn gửi lên server (thường dùng cho POST, PUT, PATCH, DELETE)
 
-    // ResFul API: Nó là 1 tiêu chuẩn dùng để thiết kế API,
-    // dựa trên các phương thức HTTP và các quy tắc về URL
-    // để tạo ra các API dễ hiểu, dễ sử dụng, và dễ bảo trì 
+       // ResFul API: Nó là 1 tiêu chuẩn dùng để thiết kế API,
+       // dựa trên các phương thức HTTP và các quy tắc về URL
+       // để tạo ra các API dễ hiểu, dễ sử dụng, và dễ bảo trì 
 
-    // GetAll: GET /api/user -> Theo chuẩn thì phải đặt các tham số vô để truy vấn 
-    // GetAllUsers: GET /api/user/getall
-    // GetAllStaff: GET /api/user/getall-staff
-    // GetAllStudent: GET /api/user/getall-student 
+       // GetAll: GET /api/user -> Theo chuẩn thì phải đặt các tham số vô để truy vấn 
+       // GetAllUsers: GET /api/user/getall
+       // GetAllStaff: GET /api/user/getall-staff
+       // GetAllStudent: GET /api/user/getall-student 
 
-    // GetById: GET /api/user/{id}
-    // Create: POST /api/user
-    // Create User: POST /api/user/create-user
-    // Update: PUT /api/user/{id}
-    // Delete: DELETE /api/user/{id}
+       // GetById: GET /api/user/{id}
+       // Create: POST /api/user
+       // Create User: POST /api/user/create-user
+       // Update: PUT /api/user/{id}
+       // Delete: DELETE /api/user/{id}
+     */
 
 
     private readonly AppDbContext _dbContext;
+    private readonly JwtOptions _jwtOptions = new();
 
-    public UserController(AppDbContext dbContext)
+    public UserController(AppDbContext dbContext, IConfiguration configuration)
     {
         _dbContext = dbContext;
+        configuration.GetSection(nameof(JwtOptions)).Bind(_jwtOptions);
     }
 
     [HttpGet("")] // Query Param: pageIndex, pageSize, sẽ thay đổi khi FE truyền vào 
     public IActionResult
         GetAllUsers(string searchTerm, int pageIndex = 1,
             int pageSize = 10) // ?: 1 là null, 2 là k truyền mặc định là 0 
-    
     {
         
        var query = _dbContext.Users.Where(x => x.IsDeleted == false);
@@ -206,43 +211,79 @@ public class UserController : ControllerBase
         
         return Ok("Update User");
     }
-
+    
    [HttpPost("Login")]
-public IActionResult Login([FromBody] Request.LoginRequest requestBody)
+public IActionResult Login(string email, string password)
 {
-    if (string.IsNullOrWhiteSpace(requestBody.Email) ||
-        string.IsNullOrWhiteSpace(requestBody.Password))
-    {
-        return BadRequest("Email và password không được để trống");
-    }
-
-    var email = requestBody.Email.Trim().ToLower();
-
-    var user = _dbContext.Users
-        .FirstOrDefault(x => 
-            x.IsDeleted == false &&
-            x.Email.ToLower() == email);
+    
+    /*
+     * // Theo ae tại sao phải login 
+       // Giới hạn quyền hạn được gọi đến các resource
+       // Ví dụ: Bạn phải là User (Đã đăng kí hệ thống) thì bạn mới đc mua hàng
+       
+       // Authentication và Authorization 
+       
+       // Authentication: Bạn có được quyền vào hệ thống của tôi kh 
+       // Authorization: Sau khi vào hệ thống của tôi rồi, thì bạn có quyền gì 
+           // Admin có quyền tạo 
+           // Mentor thì có quyền tạo lịch rãnh 
+           
+       // Vậy thì thông thường, chúng ta thường dùng kĩ thuật gì để xác thực và phân quyền 
+       // Thông thường mình hay sử dụng JWT để xác thực và phân quyền 
+       // JWT: JSon Web Token: Là 1 chuỗi Token được mã hóa
+           // truyền giữa client(FE) và Server(BE)
+           // để xác thực và phân quyền cho người dùng 
+       
+       // JWT gồm 3 phần: 
+       // Header: Chứa thông tin về thuật toán mã hóa và loại token 
+       // Payload: Chứa thông tin về người dùng và các quyền hạn của người dùng 
+       // Signature: Chứa chữ ký số để xác thực Token(sign(header+payload, secret))
+       
+     */
+   /*
+    * // Đầu tiên tìm kiếm cái tài khoản với email đó, có tồn tại hay không 
+      // Nếu mà có thì mới tính tiếp được 
+           //Tiếp tục so sánh với Password người dùng nhập vào với password có trong database
+               // Nếu mà trùng, bạn chính là chủ nhân của tài khoản, tôi sẽ trả ra JWT Token
+                   // cho bạn để xác thực và phân quyền 
+               // Nếu mà k trùng, mày k phải chủ nhân của tài khoản, cút
+       // Nếu mà k tồn tại email thì cút 
+    */
+   
+    var query = _dbContext.Users.Where(x => x.IsDeleted == false);
+    
+    query = query.Where(x => x.Email == email);
+    
+    var user = query.FirstOrDefault();
 
     if (user == null)
     {
-        return Unauthorized("Email hoặc mật khẩu không đúng");
+        return BadRequest("Email không tồn tại");
     }
 
-    if (user.Password != requestBody.Password)
+    if (user.Password != password)
     {
-        return Unauthorized("Email hoặc mật khẩu không đúng");
+        return BadRequest("Password không đúng");
     }
-
-    var response = new Response.LoginResponse()
+    
+    // Claim đại diện cho các thông tin nằm trong payload của Jwt
+    var claims = new List<Claim>
     {
-        Id = user.Id,
-        FirstName = user.FirstName,
-        LastName = user.LastName,
-        Email = user.Email,
-        Role = user.Role
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+        new Claim(ClaimTypes.Role, user.Role),
+
+        // Quan trọng: Claim này(new Claim(ClaimTypes.Role, user.Role),)
+        // Sẽ giúp mình phân quyền
+        new Claim("userId", user.Id.ToString()),
+        new Claim("Role", user.Role)
     };
 
-    return Ok(response);
+    var token = JwtService.GenerateJwtToken(claims, _jwtOptions);
+    
+    
+    return Ok();
 }
 
 [HttpPost("ForgotPassword")]
