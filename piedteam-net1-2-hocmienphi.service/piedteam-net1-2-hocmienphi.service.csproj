@@ -7,4 +7,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\piedteam-net1-2-hocmienphi.repository\piedteam-net1-2-hocmienphi.repository.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CloudinaryDotNet" Version="1.29.2" />
+      <PackageReference Include="MailKit" Version="4.17.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.11" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="11.0.0-preview.6.26359.118" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
+    </ItemGroup>
 </Project>

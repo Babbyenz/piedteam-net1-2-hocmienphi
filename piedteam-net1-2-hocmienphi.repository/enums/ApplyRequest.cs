@@ -1,6 +1,8 @@
 namespace piedteam_net1_2_hocmienphi.repository.enums;
 
-public enum ApplyRequest
+public enum ApplyRequestStatus
 {
-    
+    Pending,
+    Approved,
+    Rejected
 }

@@ -1,12 +1,8 @@
-namespace piedteam_net1_2_hocmienphi.repository.abtraction;
+namespace piedteam_net1_2_hocmienphi.repository.abstraction;
 
-public abstract class BaseEntity
+public abstract class BaseEntity <TKey>
 {
-    
-    
-    
-    
-        public Guid Id { get; set; }
+        public TKey Id { get; set; }
         public bool IsDeleted { get; set; }
     
 
