@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace piedteam_net1_2_hocmienphi.service.UserService;
 
 public class Request
@@ -14,6 +16,7 @@ public class Request
 
     public class UpdateUserRequest: CreateUserRequest
     {
+        public IFormFile? Avatar { get; set; }
         public string Phone { get; set; }
         public string Password { get; set; }
         

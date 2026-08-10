@@ -1,4 +1,4 @@
-using piedteam_net1_2_hocmienphi.repository.abtraction;
+using piedteam_net1_2_hocmienphi.repository.abstraction;
 
 namespace piedteam_net1_2_hocmienphi.repository.entity;
 
@@ -10,6 +10,8 @@ public class User: BaseEntity<Guid>
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Age { get; set; }
+    
+    public string? Avatar { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string Role { get; set; } // Admin, Mentor, Student 

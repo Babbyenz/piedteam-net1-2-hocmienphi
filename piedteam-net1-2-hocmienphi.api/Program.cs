@@ -1,5 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using piedteam_net1_2_hocmienphi.api.Extensions;
+using piedteam_net1_2_hocmienphi.api.Middlewares;
 using piedteam_net1_2_hocmienphi.repository;
+using UserService = piedteam_net1_2_hocmienphi.service.UserService;
+using MailService = piedteam_net1_2_hocmienphi.service.Utils.Mail;
+using MediaService = piedteam_net1_2_hocmienphi.service.Utils.MediaService;
+using CloudinaryService = piedteam_net1_2_hocmienphi.service.Utils.CloudinaryService;
 
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
@@ -14,22 +20,39 @@ builder.Services.AddDbContext<AppDbContext>(
         builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+builder.Services.AddJwtServices(builder.Configuration);
+builder.Services.AddSwaggerServices();
 
+builder.Services.AddScoped<UserService.IService, UserService.Service>();
+builder.Services.AddScoped<MailService.IService, MailService.Service>();
+builder.Services.AddScoped<MediaService.IService, CloudinaryService.Service>();
+
+builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
+
+
+// Từ dòng app này trở lên trên, khai báo những đồ chơi mà mình xài, không cần quan tâm thứ tự
 var app = builder.Build();
+// Từ dòng app này trở xuống, apply những đồ chơi vào sever, quan trọng thứ tự apply
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+// Phải đặt ở bên dưới app 
+// Để mọi request đều phải đi qua nó, có trường hợp nào quăng lỗi còn xử lí nhanh luôn 
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    
-    app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
+    app.UseSwaggerApi();
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+// Phải đặt phía sau Authen Author, vì xác thực phân quyền rồi, tui mới cho vào Controller chứ 
 
 app.Run();
 
@@ -126,6 +149,17 @@ app.Run();
 
 // Kĩ thuật snapshot: 
     // Dùng để lưu dữ liệu ban đầu để dễ truy xuất 
+    // Đầu tiên a có bản
+    // Trong năm 2026, anh Tân bán 1 cái Áo với giá 1000
+    // Sau do, Bao thay "Ao dep qua, muon mua cho crush"
+    // Bao mua don hang (voi ID O1) tong la 3000,
+    // trong don hang co 2 san pham, P1 va P2
+    // Thời gian đưa trôi thấm thoá
+    // Bây giờ là năm 2027, anh Tân đổi giá Áo (Id 1) thành 2000
+    // Sau do bao chia tay ny, va bao doi lai qua, luc do
+    // bao lay hoa don voi san pham P1,
+    // Crush thi keu la ngay xua a mua em co 1000 ah
+    // Sao gio anh Bao doi lai 2000
     
 
 // App này gồm bao nhiu ngưười sài: 
@@ -143,7 +177,20 @@ app.Run();
         // Quản lí lịch Book (Dời lịch, Hủy lịch) 
         // Quản lí Profile 
 
-//tìm AI theo 4W 1H 
+// 4W 1H 
+
+// WHAT
+        // Vấn đề | Sự Việc này là cái gì
+// WHY
+        // Tại sao lại có vấn đề này, tại sao lại cần giải quyết vấn đề này
+// WHEN
+        // Khi nào thì vấn đề này xảy ra, khi nào thì cần giải quyết vấn đề này
+// WHERE
+        // Ở đâu thì vấn đề này xảy ra, ở đâu thì cần giải quyết vấn đề này
+// HOW
+        // Giải quyết như thế nào
+
+
 
 
 

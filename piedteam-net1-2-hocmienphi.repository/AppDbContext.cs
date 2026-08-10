@@ -21,9 +21,7 @@ public class AppDbContext : DbContext
     
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) //Nhận cấu hình DB từ Program.cs
-    {
-        
-    }
+    {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) //Cấu hình chi tiêt 
     {

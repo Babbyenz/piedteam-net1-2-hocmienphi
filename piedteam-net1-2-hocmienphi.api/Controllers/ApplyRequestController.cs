@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using piedteam_net1_2_hocmienphi.repository;
@@ -102,7 +103,9 @@ public class ApplyRequestController :  ControllerBase
         return Ok();
     }
     
-    
+    // Tôi sẽ Apply Authorization theo policy
+        // (quy tắc, tiêu chuẩn, luật lệ) là AdminPolicy 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpGet("")]
     public IActionResult GetAllApplyRequest
     (string? searchTerm = null,
@@ -267,6 +270,8 @@ public class ApplyRequestController :  ControllerBase
             .Where(x => !x.IsDeleted);
         
         query = query.Where(x => x.Id == id);
+        //    
+        
 
         query = query.Include(x => x.User)
                         .Include(x => x.ApplyRequestCategories);

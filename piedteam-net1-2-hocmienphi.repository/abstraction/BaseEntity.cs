@@ -1,4 +1,4 @@
-namespace piedteam_net1_2_hocmienphi.repository.abtraction;
+namespace piedteam_net1_2_hocmienphi.repository.abstraction;
 
 public abstract class BaseEntity <TKey>
 {
