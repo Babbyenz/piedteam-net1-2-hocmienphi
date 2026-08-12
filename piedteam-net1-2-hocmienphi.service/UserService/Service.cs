@@ -32,13 +32,13 @@ public class Service : IService
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            var cleanUpSearchTerm = searchTerm.Trim();
+            var sanitizerText = searchTerm.Trim().ToLower();
 
             query = query
                 .Where(x =>
-                    x.FirstName.Contains(cleanUpSearchTerm) ||
-                    x.LastName.Contains(cleanUpSearchTerm) ||
-                    x.Email.Contains(cleanUpSearchTerm)
+                    x.FirstName.Contains(sanitizerText) ||
+                    x.LastName.Contains(sanitizerText) ||
+                    x.Email.Contains(sanitizerText)
                 );
 
             // FirstName: Quan, searchTerm: an => Tan.Contain(an) -> True 
@@ -62,10 +62,14 @@ public class Service : IService
         return result;
     }
 
-    public async Task<string> CreateUser(Request.UpdateUserRequest requestBody)
+    public async Task<string> CreateUser(Request.CreateUserRequest requestBody)
     {
+        var existUser = await _dbContext.Users.AnyAsync(x => x.Email == requestBody.Email);
+        if (existUser) throw new Exception("User already exists");
+        
         var newUser = new User()
         {
+            Id = Guid.NewGuid(),
             FirstName = requestBody.FirstName,
             LastName = requestBody.LastName,
             Age = "",

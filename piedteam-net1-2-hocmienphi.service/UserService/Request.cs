@@ -10,7 +10,7 @@ public class Request
         public string LastName { get; set; }
         public string Email { get; set; }
         
-        public string Age { get; set; }
+        public string Password { get; set; }
         
     }
 
@@ -18,7 +18,7 @@ public class Request
     {
         public IFormFile? Avatar { get; set; }
         public string Phone { get; set; }
-        public string Password { get; set; }
+        public string Age { get; set; }
         
     }
 

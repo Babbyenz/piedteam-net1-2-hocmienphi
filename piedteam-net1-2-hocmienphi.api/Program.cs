@@ -6,6 +6,11 @@ using UserService = piedteam_net1_2_hocmienphi.service.UserService;
 using MailService = piedteam_net1_2_hocmienphi.service.Utils.Mail;
 using MediaService = piedteam_net1_2_hocmienphi.service.Utils.MediaService;
 using CloudinaryService = piedteam_net1_2_hocmienphi.service.Utils.CloudinaryService;
+using DotNetEnv;
+
+Env.Load();
+var aspnetCoreEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", aspnetCoreEnv);
 
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
@@ -40,11 +45,14 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 
 // Configure the HTTP request pipeline.
+app.UseSwaggerApi();
+
 if (app.Environment.IsDevelopment())
 {
     //app.UseSwagger();
     //app.UseSwaggerUI();
-    app.UseSwaggerApi();
+    app.UseHttpsRedirection();
+
 }
 
 app.UseHttpsRedirection();
